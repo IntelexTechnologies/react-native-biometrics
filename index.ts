@@ -31,7 +31,7 @@ interface DeleteKeysResult {
 
 interface CreateSignatureOptions {
   promptMessage: string
-  promptSubtitleMessage: string
+  promptSubtitleMessage?: string
   payload: string
   cancelButtonText?: string
 }
@@ -44,7 +44,7 @@ interface CreateSignatureResult {
 
 interface SimplePromptOptions {
   promptMessage: string
-  promptSubtitleMessage: string
+  promptSubtitleMessage?: string
   fallbackPromptMessage?: string
   cancelButtonText?: string
 }
