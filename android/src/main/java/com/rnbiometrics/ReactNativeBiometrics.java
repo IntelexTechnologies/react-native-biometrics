@@ -156,6 +156,7 @@ public class ReactNativeBiometrics extends ReactContextBaseJavaModule {
                         public void run() {
                             try {
                                 String promptMessage = params.getString("promptMessage");
+                                String promptSubtitleMessage = params.getString("promptSubtitleMessage");
                                 String payload = params.getString("payload");
                                 String cancelButtonText = params.getString("cancelButtonText");
                                 boolean allowDeviceCredentials = params.getBoolean("allowDeviceCredentials");
@@ -174,7 +175,7 @@ public class ReactNativeBiometrics extends ReactContextBaseJavaModule {
                                 Executor executor = Executors.newSingleThreadExecutor();
                                 BiometricPrompt biometricPrompt = new BiometricPrompt(fragmentActivity, executor, authCallback);
 
-                                biometricPrompt.authenticate(getPromptInfo(promptMessage, cancelButtonText, allowDeviceCredentials), cryptoObject);
+                                biometricPrompt.authenticate(getPromptInfo(promptMessage, promptSubtitleMessage, cancelButtonText, allowDeviceCredentials), cryptoObject);
                             } catch (Exception e) {
                                 promise.reject("Error signing payload: " + e.getMessage(), "Error generating signature: " + e.getMessage());
                             }
@@ -185,8 +186,9 @@ public class ReactNativeBiometrics extends ReactContextBaseJavaModule {
         }
     }
 
-    private PromptInfo getPromptInfo(String promptMessage, String cancelButtonText, boolean allowDeviceCredentials) {
+    private PromptInfo getPromptInfo(String promptMessage, String promptSubtitleMessage, String cancelButtonText, boolean allowDeviceCredentials) {
         PromptInfo.Builder builder = new PromptInfo.Builder().setTitle(promptMessage);
+        PromptInfo.Builder builder = new PromptInfo.Builder().setSubtitle(promptSubtitleMessage)
 
         builder.setAllowedAuthenticators(getAllowedAuthenticators(allowDeviceCredentials));
 
@@ -217,6 +219,7 @@ public class ReactNativeBiometrics extends ReactContextBaseJavaModule {
                         public void run() {
                             try {
                                 String promptMessage = params.getString("promptMessage");
+                                String promptSubtitleMessage = params.getString("promptSubtitleMessage");
                                 String cancelButtonText = params.getString("cancelButtonText");
                                 boolean allowDeviceCredentials = params.getBoolean("allowDeviceCredentials");
 
@@ -225,7 +228,7 @@ public class ReactNativeBiometrics extends ReactContextBaseJavaModule {
                                 Executor executor = Executors.newSingleThreadExecutor();
                                 BiometricPrompt biometricPrompt = new BiometricPrompt(fragmentActivity, executor, authCallback);
 
-                                biometricPrompt.authenticate(getPromptInfo(promptMessage, cancelButtonText, allowDeviceCredentials));
+                                biometricPrompt.authenticate(getPromptInfo(promptMessage, promptSubtitleMessage, cancelButtonText, allowDeviceCredentials));
                             } catch (Exception e) {
                                 promise.reject("Error displaying local biometric prompt: " + e.getMessage(), "Error displaying local biometric prompt: " + e.getMessage());
                             }

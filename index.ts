@@ -31,6 +31,7 @@ interface DeleteKeysResult {
 
 interface CreateSignatureOptions {
   promptMessage: string
+  promptSubtitleMessage: string
   payload: string
   cancelButtonText?: string
 }
@@ -43,6 +44,7 @@ interface CreateSignatureResult {
 
 interface SimplePromptOptions {
   promptMessage: string
+  promptSubtitleMessage: string
   fallbackPromptMessage?: string
   cancelButtonText?: string
 }
@@ -77,7 +79,7 @@ export module ReactNativeBiometricsLegacy {
    * @returns {Promise<Object>} Promise that resolves to an object with details about biometrics available
    */
   export function isSensorAvailable(): Promise<IsSensorAvailableResult> {
-    return new ReactNativeBiometrics().isSensorAvailable()
+    return new ReactNativeBiometrics().isSensorAvailable();
   }
 
   /**
@@ -86,7 +88,7 @@ export module ReactNativeBiometricsLegacy {
    * @returns {Promise<Object>}  Promise that resolves to object with details about the newly generated public key
    */
   export function createKeys(): Promise<CreateKeysResult> {
-    return new ReactNativeBiometrics().createKeys()
+    return new ReactNativeBiometrics().createKeys();
   }
 
   /**
@@ -95,7 +97,7 @@ export module ReactNativeBiometricsLegacy {
    * @returns {Promise<Object>} Promise that resolves to object with details about the existence of keys
    */
   export function biometricKeysExist(): Promise<BiometricKeysExistResult> {
-    return new ReactNativeBiometrics().biometricKeysExist()
+    return new ReactNativeBiometrics().biometricKeysExist();
   }
 
   /**
@@ -104,7 +106,7 @@ export module ReactNativeBiometricsLegacy {
    * @returns {Promise<Object>} Promise that resolves to an object with details about the deletion
    */
   export function deleteKeys(): Promise<DeleteKeysResult> {
-    return new ReactNativeBiometrics().deleteKeys()
+    return new ReactNativeBiometrics().deleteKeys();
   }
 
   /**
@@ -113,11 +115,14 @@ export module ReactNativeBiometricsLegacy {
    * which is cryptographic signature of the payload
    * @param {Object} createSignatureOptions
    * @param {string} createSignatureOptions.promptMessage
+   * @param {string} createSignatureOptions.promptSubtitleMessage
    * @param {string} createSignatureOptions.payload
    * @returns {Promise<Object>}  Promise that resolves to an object cryptographic signature details
    */
-  export function createSignature(createSignatureOptions: CreateSignatureOptions): Promise<CreateSignatureResult> {
-    return new ReactNativeBiometrics().createSignature(createSignatureOptions)
+  export function createSignature(
+    createSignatureOptions: CreateSignatureOptions
+  ): Promise<CreateSignatureResult> {
+    return new ReactNativeBiometrics().createSignature(createSignatureOptions);
   }
 
   /**
@@ -126,99 +131,112 @@ export module ReactNativeBiometricsLegacy {
    * object.success = false if the user cancels, and rejects if anything fails
    * @param {Object} simplePromptOptions
    * @param {string} simplePromptOptions.promptMessage
+   * * @param {string} createSignatureOptions.promptSubtitleMessage
    * @param {string} simplePromptOptions.fallbackPromptMessage
    * @returns {Promise<Object>}  Promise that resolves an object with details about the biometrics result
    */
-  export function simplePrompt(simplePromptOptions: SimplePromptOptions): Promise<SimplePromptResult> {
-    return new ReactNativeBiometrics().simplePrompt(simplePromptOptions)
+  export function simplePrompt(
+    simplePromptOptions: SimplePromptOptions
+  ): Promise<SimplePromptResult> {
+    return new ReactNativeBiometrics().simplePrompt(simplePromptOptions);
   }
 }
 
 export default class ReactNativeBiometrics {
-    allowDeviceCredentials = false
+  allowDeviceCredentials = false;
 
-    /**
-     * @param {Object} rnBiometricsOptions
-     * @param {boolean} rnBiometricsOptions.allowDeviceCredentials
-     */
-    constructor(rnBiometricsOptions?: RNBiometricsOptions) {
-      const allowDeviceCredentials = rnBiometricsOptions?.allowDeviceCredentials ?? false
-      this.allowDeviceCredentials = allowDeviceCredentials
-    }
-
-    /**
-     * Returns promise that resolves to an object with object.biometryType = Biometrics | TouchID | FaceID
-     * @returns {Promise<Object>} Promise that resolves to an object with details about biometrics available
-     */
-    isSensorAvailable(): Promise<IsSensorAvailableResult> {
-      return bridge.isSensorAvailable({
-        allowDeviceCredentials: this.allowDeviceCredentials
-      })
-    }
-
-    /**
-     * Creates a public private key pair,returns promise that resolves to
-     * an object with object.publicKey, which is the public key of the newly generated key pair
-     * @returns {Promise<Object>}  Promise that resolves to object with details about the newly generated public key
-     */
-    createKeys(): Promise<CreateKeysResult> {
-      return bridge.createKeys({
-        allowDeviceCredentials: this.allowDeviceCredentials
-      })
-    }
-
-    /**
-     * Returns promise that resolves to an object with object.keysExists = true | false
-     * indicating if the keys were found to exist or not
-     * @returns {Promise<Object>} Promise that resolves to object with details aobut the existence of keys
-     */
-    biometricKeysExist(): Promise<BiometricKeysExistResult> {
-      return bridge.biometricKeysExist()
-    }
-
-    /**
-     * Returns promise that resolves to an object with true | false
-     * indicating if the keys were properly deleted
-     * @returns {Promise<Object>} Promise that resolves to an object with details about the deletion
-     */
-    deleteKeys(): Promise<DeleteKeysResult> {
-      return bridge.deleteKeys()
-    }
-
-    /**
-     * Prompts user with biometrics dialog using the passed in prompt message and
-     * returns promise that resolves to an object with object.signature,
-     * which is cryptographic signature of the payload
-     * @param {Object} createSignatureOptions
-     * @param {string} createSignatureOptions.promptMessage
-     * @param {string} createSignatureOptions.payload
-     * @returns {Promise<Object>}  Promise that resolves to an object cryptographic signature details
-     */
-    createSignature(createSignatureOptions: CreateSignatureOptions): Promise<CreateSignatureResult> {
-      createSignatureOptions.cancelButtonText = createSignatureOptions.cancelButtonText ?? 'Cancel'
-
-      return bridge.createSignature({
-        allowDeviceCredentials: this.allowDeviceCredentials,
-        ...createSignatureOptions
-      })
-    }
-
-    /**
-     * Prompts user with biometrics dialog using the passed in prompt message and
-     * returns promise that resolves to an object with object.success = true if the user passes,
-     * object.success = false if the user cancels, and rejects if anything fails
-     * @param {Object} simplePromptOptions
-     * @param {string} simplePromptOptions.promptMessage
-     * @param {string} simplePromptOptions.fallbackPromptMessage
-     * @returns {Promise<Object>}  Promise that resolves an object with details about the biometrics result
-     */
-    simplePrompt(simplePromptOptions: SimplePromptOptions): Promise<SimplePromptResult> {
-      simplePromptOptions.cancelButtonText = simplePromptOptions.cancelButtonText ?? 'Cancel'
-      simplePromptOptions.fallbackPromptMessage = simplePromptOptions.fallbackPromptMessage ?? 'Use Passcode'
-
-      return bridge.simplePrompt({
-        allowDeviceCredentials: this.allowDeviceCredentials,
-        ...simplePromptOptions
-      })
-    }
+  /**
+   * @param {Object} rnBiometricsOptions
+   * @param {boolean} rnBiometricsOptions.allowDeviceCredentials
+   */
+  constructor(rnBiometricsOptions?: RNBiometricsOptions) {
+    const allowDeviceCredentials =
+      rnBiometricsOptions?.allowDeviceCredentials ?? false;
+    this.allowDeviceCredentials = allowDeviceCredentials;
   }
+
+  /**
+   * Returns promise that resolves to an object with object.biometryType = Biometrics | TouchID | FaceID
+   * @returns {Promise<Object>} Promise that resolves to an object with details about biometrics available
+   */
+  isSensorAvailable(): Promise<IsSensorAvailableResult> {
+    return bridge.isSensorAvailable({
+      allowDeviceCredentials: this.allowDeviceCredentials,
+    });
+  }
+
+  /**
+   * Creates a public private key pair,returns promise that resolves to
+   * an object with object.publicKey, which is the public key of the newly generated key pair
+   * @returns {Promise<Object>}  Promise that resolves to object with details about the newly generated public key
+   */
+  createKeys(): Promise<CreateKeysResult> {
+    return bridge.createKeys({
+      allowDeviceCredentials: this.allowDeviceCredentials,
+    });
+  }
+
+  /**
+   * Returns promise that resolves to an object with object.keysExists = true | false
+   * indicating if the keys were found to exist or not
+   * @returns {Promise<Object>} Promise that resolves to object with details aobut the existence of keys
+   */
+  biometricKeysExist(): Promise<BiometricKeysExistResult> {
+    return bridge.biometricKeysExist();
+  }
+
+  /**
+   * Returns promise that resolves to an object with true | false
+   * indicating if the keys were properly deleted
+   * @returns {Promise<Object>} Promise that resolves to an object with details about the deletion
+   */
+  deleteKeys(): Promise<DeleteKeysResult> {
+    return bridge.deleteKeys();
+  }
+
+  /**
+   * Prompts user with biometrics dialog using the passed in prompt message and
+   * returns promise that resolves to an object with object.signature,
+   * which is cryptographic signature of the payload
+   * @param {Object} createSignatureOptions
+   * @param {string} createSignatureOptions.promptMessage
+   * @param {string} createSignatureOptions.promptSubtitleMessage
+   * @param {string} createSignatureOptions.payload
+   * @returns {Promise<Object>}  Promise that resolves to an object cryptographic signature details
+   */
+  createSignature(
+    createSignatureOptions: CreateSignatureOptions
+  ): Promise<CreateSignatureResult> {
+    createSignatureOptions.cancelButtonText =
+      createSignatureOptions.cancelButtonText ?? "Cancel";
+
+    return bridge.createSignature({
+      allowDeviceCredentials: this.allowDeviceCredentials,
+      ...createSignatureOptions,
+    });
+  }
+
+  /**
+   * Prompts user with biometrics dialog using the passed in prompt message and
+   * returns promise that resolves to an object with object.success = true if the user passes,
+   * object.success = false if the user cancels, and rejects if anything fails
+   * @param {Object} simplePromptOptions
+   * @param {string} simplePromptOptions.promptMessage
+   * @param {string} createSignatureOptions.promptSubtitleMessage
+   * @param {string} simplePromptOptions.fallbackPromptMessage
+   * @returns {Promise<Object>}  Promise that resolves an object with details about the biometrics result
+   */
+  simplePrompt(
+    simplePromptOptions: SimplePromptOptions
+  ): Promise<SimplePromptResult> {
+    simplePromptOptions.cancelButtonText =
+      simplePromptOptions.cancelButtonText ?? "Cancel";
+    simplePromptOptions.fallbackPromptMessage =
+      simplePromptOptions.fallbackPromptMessage ?? "Use Passcode";
+
+    return bridge.simplePrompt({
+      allowDeviceCredentials: this.allowDeviceCredentials,
+      ...simplePromptOptions,
+    });
+  }
+}
